@@ -47,7 +47,7 @@ target: ${target}
 result: ${result}
 </pre>
 
-        <form action="/.netlify/functions/server" method="post">
+        <form method="post">
           <input type="number" name="amount" value="${amount}">
           <input type="number" name="currency_source" value="${source}">
           <input type="number" name="currency_target" value="${target}">
