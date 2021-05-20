@@ -1,4 +1,4 @@
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/hello-world"
+  to = "/.netlify/functions/server"
   status = 200
