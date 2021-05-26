@@ -1,33 +1,44 @@
 // TODO:
 // Parse input (amount, source, target)
+//
 // Do calculations
 // Inject the result in HMTL
 // Send HTML in response
 
-const handler = async (event, context, callback) => {
-  let amount = 100;
-  let source = 2;
-  let target = 3;
+// Placeholder data from: https://www.reddit.com/r/gaming/comments/725t5v/exchange_rates_of_video_game_currencies/
+const currencies = [
+    { id: 0, name: "Euro", rate: 1.0 },
+    { id: 1, name: "US Dollar", rate: 0.83675 },
+    { id: 2, name: "Mineral (StarCraft)", rate: 34722222.22222 },
+    { id: 3, name: "Coin (Super Mario Bros.)", rate: 100000.0 },
+    { id: 4, name: "Poke Dollar (Pokémon Red/Blue)", rate: 0.00049 },
+];
 
-  if (event.body) {
-    const params = event.body.split("&");
-    amount = parseInt(params[0].split("=")[1]);
-    source = parseInt(params[1].split("=")[1]);
-    target = parseInt(params[2].split("=")[1]);
-  }
+const handler = async(event, context, callback) => {
+    let amount = 100;
+    let source = 2;
+    let target = 3;
 
-  const result = amount * source * target;
+    if (event.body) {
+        const params = event.body.split("&");
+        amount = parseInt(params[0].split("=")[1]);
+        source = parseInt(params[1].split("=")[1]);
+        target = parseInt(params[2].split("=")[1]);
+        console.log("-> values received:", { source, target });
+    }
 
-  console.log({ amount, source, target, result });
+    const result = amount * source * target;
 
-  return {
-    statusCode: 200,
-    body: renderHTML(amount, source, target, result),
-  };
+    console.log({ amount, source, target, result });
+
+    return {
+        statusCode: 200,
+        body: renderHTML(amount, source, target, result),
+    };
 };
 
 function renderHTML(amount, source, target, result) {
-  return `
+    return `
     <!DOCTYPE html>
     <html lang="en">
 
@@ -42,15 +53,15 @@ function renderHTML(amount, source, target, result) {
         <h1>Video game currency converter</h1>
 
 <pre>amount: ${amount}
-source: ${source}
-target: ${target}
+source: ${JSON.stringify(currencies[source])}
+target: ${JSON.stringify(currencies[target])}
 result: ${result}
 </pre>
 
         <form method="post">
           <input type="number" name="amount" value="${amount}">
-          <input type="number" name="currency_source" value="${source}">
-          <input type="number" name="currency_target" value="${target}">
+          ${renderCurrencySelect("source", source)}
+          ${renderCurrencySelect("target", target)}
           <button type="submit">submit</button>
         </form>
       </body>
@@ -58,5 +69,20 @@ result: ${result}
     </html>
   `;
 }
+
+function renderCurrencySelect(name, value) {
+    return `
+      <select name="${name}">
+        ${currencies.map((currency, currencyIndex) => {
+          return `<option value="${currencyIndex}" ${currencyIndex == value ? "selected" : ""}>${currency.name}</option>`
+        }).join("\n")}
+      </select>
+    `;
+}
+
+// () => { return 0; }
+// () => ( 0 );
+
+// bla.map(x => <MyComponent x={x == 0 ? "selected" : "bla"} />)
 
 module.exports = { handler };
