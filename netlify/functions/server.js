@@ -42,32 +42,41 @@ function renderHTML(amount, source, target, result) {
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Video game currency converter</title>
+        <link rel="stylesheet" href="/style.css">
       </head>
 
       <body>
         <h1>Video game currency converter</h1>
 
+        <section>
         <form method="post">
-          <input type="number" name="amount" value="${amount}">
-          ${renderCurrencySelect("source", source)}
-          ${renderCurrencySelect("target", target)}
+          <label>
+            <span>Amount:</span>
+            <input type="number" name="amount" value="${amount}">
+          </label>
+          ${renderCurrencySelect("source", source, "From")}
+          ${renderCurrencySelect("target", target, "To")}
           <button type="submit">submit</button>
         </form>
 
-        <h2>${amount} ${currencies[source].name} = ${result} ${currencies[target].name}</h2>
+        <h2>${amount} ${currencies[source].name} =<br />${result} ${currencies[target].name}</h2>
+        </section>
       </body>
 
     </html>
   `;
 }
 
-function renderCurrencySelect(name, value) {
+function renderCurrencySelect(name, value, label) {
     return `
-      <select name="${name}">
-        ${currencies.map((currency, currencyIndex) => {
-          return `<option value="${currencyIndex}" ${currencyIndex == value ? "selected" : ""}>${currency.name}</option>`
-        }).join("\n")}
-      </select>
+      <label>
+        <span>${label}:</span>
+        <select name="${name}">
+          ${currencies.map((currency, currencyIndex) => {
+            return `<option value="${currencyIndex}" ${currencyIndex == value ? "selected" : ""}>${currency.name}</option>`
+          }).join("\n")}
+        </select>
+      </label>
     `;
 }
 

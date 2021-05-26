@@ -1,0 +1,40 @@
+body {
+    padding: 0;
+    margin: 0;
+    background: rgba(230, 230, 230, 1);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+section {
+    padding: 1em;
+    margin: 1em;
+    background: #fff;
+}
+
+h1 {
+    margin: 0 0 1em 0;
+    padding: 1em;
+    font-size: 1.5em;
+    line-height: 140%;
+    background: rgba(50, 50, 50, 1);
+    color: #fff;
+}
+
+form {
+    margin: 0 0 1em 0;
+}
+
+label {
+    display: block;
+}
+
+label>span {
+    display: block;
+}
+
+h2 {
+    margin: 0;
+    padding: 0;
+    font-size: 1.2em;
+    line-height: 140%;
+}
