@@ -102,3 +102,26 @@ button {
     background: var(--accent-color);
     color: #fff;
 }
+
+
+/*
+**Desktop draft
+*/
+
+@media only screen and (min-width: 961px) {
+    section {
+        margin: 3rem;
+        padding: 3rem;
+        font-size: .2rem;
+    }
+    form {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+    label,
+    button {
+        width: 30%;
+    }
+}
