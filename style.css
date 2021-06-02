@@ -104,6 +104,11 @@ button {
 }
 
 @media (min-width: 1024px) {
+    h1 {
+        max-width: 982px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
     section {
         max-width: 950px;
         margin: 0 auto;
