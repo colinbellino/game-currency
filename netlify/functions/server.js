@@ -9,17 +9,17 @@ const currencies = [
   { id: 5, name: "Rupee (Zelda)", rate: 0.09633 },
 ];
 
-const handler = async (event, context, callback) => {
+const handler = async(event, context, callback) => {
   let amount = 1;
   let source = 0;
   let target = 4;
 
   if (event.body) {
-    const params = event.body.split("&");
-    amount = parseInt(params[0].split("=")[1]);
-    source = parseInt(params[1].split("=")[1]);
-    target = parseInt(params[2].split("=")[1]);
-    console.log("-> values received:", { source, target });
+      const params = event.body.split("&");
+      amount = parseInt(params[0].split("=")[1]);
+      source = parseInt(params[1].split("=")[1]);
+      target = parseInt(params[2].split("=")[1]);
+      console.log("-> values received:", { source, target });
   }
 
   const result = amount * currencies[source].rate / currencies[target].rate;
@@ -27,13 +27,13 @@ const handler = async (event, context, callback) => {
   // console.log({ amount, source, target, result });
 
   return {
-    statusCode: 200,
-    body: renderHTML(amount, source, target, result),
+      statusCode: 200,
+      body: renderHTML(amount, source, target, result),
   };
 };
 
 function renderHTML(amount, source, target, result) {
-  return `
+    return `
     <!DOCTYPE html>
     <html lang="en">
 
@@ -56,13 +56,11 @@ function renderHTML(amount, source, target, result) {
           </label>
           ${renderCurrencySelect("source", source, "From")}
           ${renderCurrencySelect("target", target, "To")}
+          <h2>${amount} ${currencies[source].name} = <b>${result} ${currencies[target].name}</b></h2>
           <button type="submit">Convert</button>
         </form>
-
-        <h2>${amount} ${currencies[source].name} = <b>${result} ${currencies[target].name}</b></h2>
         </section>
       </body>
-
     </html>
   `;
 }

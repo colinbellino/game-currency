@@ -1,104 +1,126 @@
 :root {
-    --border-radius: 0.2em;
-    --accent-color: #00897b;
+  --border-radius: 0.2em;
+  --accent-color: #00897b;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    color: rgba(0, 0, 0, 0.9);
-    background: rgba(235, 235, 235, 1);
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: rgba(0, 0, 0, 0.9);
+  background: rgba(235, 235, 235, 1);
 }
 
 body:before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 200px;
-    z-index: -1;
-    content: "";
-    background: rgba(0, 0, 0, 0.9);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  z-index: -1;
+  content: "";
+  background: rgba(0, 0, 0, 0.9);
 }
 
 h1 {
-    margin: 0 0 1rem 0;
-    padding: 1rem 1rem 0.1rem 1rem;
-    font-size: 1.2rem;
-    line-height: 140%;
-    color: #fff;
+  margin: 0 0 1rem 0;
+  padding: 1rem 1rem 0.1rem 1rem;
+  font-size: 1.2rem;
+  line-height: 140%;
+  color: #fff;
 }
 
 h2 {
-    margin: 0;
-    padding: 0;
-    font-weight: normal;
-    font-size: 1rem;
-    line-height: 140%;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  font-size: 1rem;
+  line-height: 140%;
 }
 
 h2>b {
-    display: block;
-    font-size: 1.2em;
-    margin-top: 0.5rem;
+  display: block;
+  font-size: 1.2em;
+  margin: 0.5rem 0 1rem 0;
 }
 
 section {
-    margin: 1rem;
-    padding: 1rem;
-    font-size: 1.2rem;
-    font-weight: normal;
-    border-radius: var(--border-radius);
-    background: #fff;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  margin: 1rem;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: normal;
+  border-radius: var(--border-radius);
+  background: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 label {
-    display: block;
-    margin: 0 0 1.2rem;
-    font-size: 0.9rem;
+  display: block;
+  margin: 0 0 1.2rem;
+  font-size: 0.9rem;
 }
 
 label:last-of-type {
-    margin-bottom: 2rem;
+  margin-bottom: 2rem;
 }
 
 label>span {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
 select,
 input {
-    box-sizing: border-box;
-    display: block;
-    width: 100%;
-    margin: 0;
-    padding: 0.5rem;
-    border: 2px solid rgba(0, 0, 0, 0.15);
-    border-radius: var(--border-radius);
-    background: transparent;
-    position: relative;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0.5rem;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-radius: var(--border-radius);
+  background: transparent;
+  position: relative;
 }
 
 select:focus,
 input:focus {
-    border-color: var(--accent-color);
-    outline: none;
+  border-color: var(--accent-color);
+  outline: none;
 }
 
 button {
-    box-sizing: border-box;
-    display: block;
-    width: 100%;
-    margin: 0 0 1rem 0;
-    padding: 1rem;
-    border: 0;
-    border-radius: var(--border-radius);
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    background: var(--accent-color);
-    color: #fff;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 0 0 1rem 0;
+  padding: 1rem;
+  border: 0;
+  border-radius: var(--border-radius);
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  background: var(--accent-color);
+  color: #fff;
+}
+
+@media (min-width: 1024px) {
+  h1 {
+      max-width: 982px;
+      margin: 0 auto;
+      padding: 1rem;
+  }
+  section {
+      max-width: 950px;
+      margin: 0 auto;
+  }
+  form {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+  }
+  label,
+  button {
+      width: 30%;
+  }
 }
