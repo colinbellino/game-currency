@@ -10,38 +10,35 @@ const currencies = [
 ];
 
 const handler = async (event, context, callback) => {
-  let error = null;
-  let originalAmount = 1;
-  let amount = originalAmount;
-  let source = 0;
-  let target = 4;
+  let data = {
+    originalAmount: "1",
+    amount: 1,
+    source: 0,
+    target: 4,
+    result: 0,
+  };
 
   if (event.body) {
-    const [parseError, data] = parseBody(event.body);
+    const [parseError, parsedData] = parseBody(event.body);
     if (parseError) {
       console.error(parseError);
-      // error = parseError;
-    } else {
-      originalAmount = data.originalAmount;
-
-      const validationError = validate(data);
-
-      if (validationError) {
-        console.error(validationError);
-        error = validationError;
-      } else {
-        ({ amount, source, target } = data);
-      }
+      return { statusCode: 400, body: renderHTML(parseError, data) };
     }
+
+    data.originalAmount = parsedData.originalAmount;
+
+    const validationError = validate(parsedData);
+    if (validationError) {
+      console.error(validationError);
+      return { statusCode: 400, body: renderHTML(validationError, data) };
+    }
+
+    data = parsedData;
   }
 
-  console.log("data", { amount, source, target });
-  const result = amount * currencies[source].rate / currencies[target].rate;
+  data.result = data.amount * currencies[data.source].rate / currencies[data.target].rate;
 
-  return {
-    statusCode: 200,
-    body: renderHTML(error, originalAmount, source, target, result),
-  };
+  return { statusCode: 200, body: renderHTML(null, data) };
 };
 
 function parseBody(body) {
@@ -104,7 +101,7 @@ function validate(input) {
   return null;
 }
 
-function renderHTML(error, amount, source, target, result) {
+function renderHTML(error, { originalAmount, amount, source, target, result }) {
   return `
     <!DOCTYPE html>
     <html lang="en">
