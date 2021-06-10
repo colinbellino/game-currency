@@ -9,31 +9,103 @@ const currencies = [
   { id: 5, name: "Rupee (Zelda)", rate: 0.09633 },
 ];
 
-const handler = async(event, context, callback) => {
-  let amount = 1;
+const handler = async (event, context, callback) => {
+  let error = null;
+  let originalAmount = 1;
+  let amount = originalAmount;
   let source = 0;
   let target = 4;
 
   if (event.body) {
-      const params = event.body.split("&");
-      amount = parseInt(params[0].split("=")[1]);
-      source = parseInt(params[1].split("=")[1]);
-      target = parseInt(params[2].split("=")[1]);
-      console.log("-> values received:", { source, target });
+    const [parseError, data] = parseBody(event.body);
+    if (parseError) {
+      console.error(parseError);
+      // error = parseError;
+    } else {
+      originalAmount = data.originalAmount;
+
+      const validationError = validate(data);
+
+      if (validationError) {
+        console.error(validationError);
+        error = validationError;
+      } else {
+        ({ amount, source, target } = data);
+      }
+    }
   }
 
+  console.log("data", { amount, source, target });
   const result = amount * currencies[source].rate / currencies[target].rate;
 
-  // console.log({ amount, source, target, result });
-
   return {
-      statusCode: 200,
-      body: renderHTML(amount, source, target, result),
+    statusCode: 200,
+    body: renderHTML(error, originalAmount, source, target, result),
   };
 };
 
-function renderHTML(amount, source, target, result) {
-    return `
+function parseBody(body) {
+  const params = body.split("&");
+  if (params.length != 3) {
+    return [{ message: "Invalid params." }, {}];
+  }
+
+  const amountKeyValue = params[0].split("=");
+  if (amountKeyValue.length != 2) {
+    return [{ message: "Missing amount." }, {}];
+  }
+
+  const originalAmount = amountKeyValue[1];
+  const amount = parseFloat(originalAmount);
+  if (isNaN(amount)) {
+    return [{ message: "Invalid amount." }, {}];
+  }
+
+  const sourceKeyValue = params[1].split("=");
+  if (sourceKeyValue.length != 2) {
+    return [{ message: "Missing source." }, {}];
+  }
+
+  const source = parseInt(sourceKeyValue[1]);
+  if (isNaN(source)) {
+    return [{ message: "Invalid source." }, {}];
+  }
+
+  const targetKeyValue = params[2].split("=");
+  if (targetKeyValue.length != 2) {
+    return [{ message: "Missing target." }, {}];
+  }
+
+  const target = parseInt(targetKeyValue[1]);
+  if (isNaN(target)) {
+    return [{ message: "Invalid target." }, {}];
+  }
+
+  return [null, { originalAmount, amount, source, target }];
+}
+
+function validate(input) {
+  if (input.amount > 1_000_000_000_000) {
+    return { message: "Amount too large." };
+  }
+
+  if (input.amount < -1_000_000_000_000) {
+    return { message: "Amount too small." };
+  }
+
+  if (input.source < 0 || input.source > currencies.length - 1) {
+    return { message: "Invalid source currency." };
+  }
+
+  if (input.target < 0 || input.target > currencies.length - 1) {
+    return { message: "Invalid target currency." };
+  }
+
+  return null;
+}
+
+function renderHTML(error, amount, source, target, result) {
+  return `
     <!DOCTYPE html>
     <html lang="en">
 
@@ -52,11 +124,14 @@ function renderHTML(amount, source, target, result) {
         <form method="post">
           <label>
             <span>Amount:</span>
-            <input type="number" name="amount" value="${amount}">
+            <input type="text" name="amount" value="${amount}">
           </label>
           ${renderCurrencySelect("source", source, "From")}
           ${renderCurrencySelect("target", target, "To")}
-          <h2>${amount} ${currencies[source].name} = <b>${result} ${currencies[target].name}</b></h2>
+          ${error
+      ? `<h2 style="color: red;">${error.message}</h2>`
+      : `<h2>${amount} ${currencies[source].name} = <b>${result} ${currencies[target].name}</b></h2>`
+    }
           <button type="submit">Convert</button>
         </form>
         </section>
@@ -77,10 +152,5 @@ function renderCurrencySelect(name, value, label) {
       </label>
     `;
 }
-
-// () => { return 0; }
-// () => ( 0 );
-
-// bla.map(x => <MyComponent x={x == 0 ? "selected" : "bla"} />)
 
 module.exports = { handler };
