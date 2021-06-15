@@ -1,4 +1,4 @@
-const { currencies, renderResult, parseData, validate } = require('../../public/shared.js');
+const { currencies, renderResult, parseData, validate, calculateResult } = require('../../public/shared.js');
 
 async function handler(event, context, callback) {
   let data = {
@@ -28,7 +28,7 @@ async function handler(event, context, callback) {
     data = parsedData;
   }
 
-  data.result = data.amount * currencies[data.source].rate / currencies[data.target].rate;
+  data.result = calculateResult(data.amount, currencies[data.source].rate, currencies[data.target].rate);
 
   return { statusCode: 200, body: renderHTML(null, data, currencies) };
 };
@@ -90,8 +90,7 @@ function renderHTML(error, { originalAmount, amount, source, target, result }, c
           <button type="submit">Convert</button>
         </form>
         </section>
-        <script>window.currencies = ${JSON.stringify(currencies)}</script>
-        <script src="/public/app.js"></script>
+        <script type="module" src="/public/app.js"></script>
       </body>
     </html>
   `;

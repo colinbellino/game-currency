@@ -5,7 +5,9 @@
         "build": "netlify-lambda build src/functions"
     },
     "dependencies": {
-        "netlify-cli": "3.37.31",
         "netlify-lambda": "2.0.9"
+    },
+    "devDependencies": {
+        "netlify-cli": "3.37.31"
     }
 }
