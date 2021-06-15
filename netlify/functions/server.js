@@ -53,7 +53,7 @@ function parseBody(body) {
   }
 
   const originalAmount = amountKeyValue[1];
-  const amount = parseFloat(originalAmount);
+  const amount = Number(originalAmount);
   if (isNaN(amount)) {
     return [{ message: "Invalid amount." }, {}];
   }
