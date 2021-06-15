@@ -10,6 +10,7 @@ const currencies = [
 ];
 
 const handler = async (event, context, callback) => {
+  var formatter = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 20 });
   let data = {
     originalAmount: "1",
     amount: 1,
@@ -22,7 +23,7 @@ const handler = async (event, context, callback) => {
     const [parseError, parsedData] = parseBody(event.body);
     if (parseError) {
       console.error(parseError);
-      return { statusCode: 400, body: renderHTML(parseError, data) };
+      return { statusCode: 400, body: renderHTML(parseError, data, formatter) };
     }
 
     data.originalAmount = parsedData.originalAmount;
@@ -30,7 +31,7 @@ const handler = async (event, context, callback) => {
     const validationError = validate(parsedData);
     if (validationError) {
       console.error(validationError);
-      return { statusCode: 400, body: renderHTML(validationError, data) };
+      return { statusCode: 400, body: renderHTML(validationError, data, formatter) };
     }
 
     data = parsedData;
@@ -38,7 +39,7 @@ const handler = async (event, context, callback) => {
 
   data.result = data.amount * currencies[data.source].rate / currencies[data.target].rate;
 
-  return { statusCode: 200, body: renderHTML(null, data) };
+  return { statusCode: 200, body: renderHTML(null, data, formatter) };
 };
 
 function parseBody(body) {
@@ -101,7 +102,7 @@ function validate(input) {
   return null;
 }
 
-function renderHTML(error, { originalAmount, amount, source, target, result }) {
+function renderHTML(error, { originalAmount, amount, source, target, result }, currencyFormatter) {
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -127,7 +128,7 @@ function renderHTML(error, { originalAmount, amount, source, target, result }) {
           ${renderCurrencySelect("target", target, "To")}
           ${error
       ? `<h2 style="color: red;">${error.message}</h2>`
-      : `<h2>${amount} ${currencies[source].name} = <b>${result} ${currencies[target].name}</b></h2>`
+      : `<h2>${amount} ${currencies[source].name} = <b>${currencyFormatter.format(result)} ${currencies[target].name}</b></h2>`
     }
           <button type="submit">Convert</button>
         </form>
