@@ -2,20 +2,20 @@
 // FIXME: These rates are in € but we use them as if they were in USD !
 const currencyFormatter = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 20 });
 
-const currencies = [
-    { id: 0, name: "US Dollar", rate: 1.0 },
-    { id: 1, name: "Euro", rate: 1.223093 },
-    { id: 2, name: "Mineral (StarCraft)", rate: 34722222.22222 },
-    { id: 3, name: "Coin (Super Mario Bros.)", rate: 100000 },
-    { id: 4, name: "Poke Dollar (Pokémon Red/Blue)", rate: 0.00049 },
-    { id: 5, name: "Rupee (Zelda)", rate: 0.09633 },
+export const currencies = [
+    { id: "us_dollar", name: "US Dollar", rate: 1.0 },
+    { id: "euro", name: "Euro", rate: 1.223093 },
+    { id: "mineral_starcraft_1", name: "Mineral (StarCraft)", rate: 34722222.22222 },
+    { id: "coin_super_mario_bros", name: "Coin (Super Mario Bros.)", rate: 100000 },
+    { id: "poke_dollar_pokemon_red", name: "Poke Dollar (Pokémon Red/Blue)", rate: 0.00049 },
+    { id: "rupee_zelda_1", name: "Rupee (Zelda)", rate: 0.09633 },
 ];
 
-function renderResult(sourceCurrency, targetCurrency, amount, result) {
+export function renderResult(sourceCurrency, targetCurrency, amount, result) {
     return `${amount} ${sourceCurrency.name} = <b>${result} ${targetCurrency.name}</b></h2>`;
 }
 
-function parseData(input) {
+export function parseData(input) {
     const originalAmount = input.amount;
     const amount = Number(originalAmount);
     if (isNaN(amount)) {
@@ -35,7 +35,7 @@ function parseData(input) {
     return [null, { originalAmount, amount, source, target }];
 }
 
-function validate(input) {
+export function validate(input) {
     if (input.amount > 1_000_000_000_000) {
         return { message: "Amount too large." };
     }
@@ -55,9 +55,6 @@ function validate(input) {
     return null;
 }
 
-module.exports = {
-    currencies,
-    renderResult,
-    parseData,
-    validate,
+export function calculateResult(amount, sourceRate, targetRate) {
+    return amount * sourceRate / targetRate;
 }

@@ -1,0 +1,13 @@
+{
+    "name": "game-currency",
+    "scripts": {
+        "dev": "netlify dev",
+        "build": "netlify-lambda build src/functions"
+    },
+    "dependencies": {
+        "netlify-lambda": "2.0.9"
+    },
+    "devDependencies": {
+        "netlify-cli": "3.37.31"
+    }
+}
