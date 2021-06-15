@@ -11,13 +11,13 @@ async function handler(event, context, callback) {
 
   if (event.body) {
     const [_, inputs] = parseBody(event.body);
+    data.originalAmount = inputs.amount;
+
     const [parseError, parsedData] = parseData(inputs);
     if (parseError) {
       console.error(parseError);
       return { statusCode: 400, body: renderHTML(parseError, data, currencies) };
     }
-
-    data.originalAmount = parsedData.originalAmount;
 
     const validationError = validate(parsedData);
     if (validationError) {
@@ -79,7 +79,7 @@ function renderHTML(error, { originalAmount, amount, source, target, result }, c
         <form method="post">
           <label>
             <span>Amount</span>
-            <input type="text" name="amount" value="${amount}">
+            <input type="text" name="amount" value="${originalAmount}">
           </label>
           ${renderCurrencySelect("source", source, "From")}
           ${renderCurrencySelect("target", target, "To")}

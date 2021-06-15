@@ -3,5 +3,9 @@
   to = "/.netlify/functions/server"
   status = 200
 
+[build]
+  command = "npm run build"
+  functions = "build/functions"
+
 [dev]
   autoLaunch = false
