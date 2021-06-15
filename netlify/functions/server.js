@@ -8,9 +8,9 @@ const currencies = [
   { id: 4, name: "Poke Dollar (Pokémon Red/Blue)", rate: 0.00049 },
   { id: 5, name: "Rupee (Zelda)", rate: 0.09633 },
 ];
+const currencyFormatter = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 20 });
 
 const handler = async (event, context, callback) => {
-  var formatter = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 20 });
   let data = {
     originalAmount: "1",
     amount: 1,
@@ -20,10 +20,11 @@ const handler = async (event, context, callback) => {
   };
 
   if (event.body) {
-    const [parseError, parsedData] = parseBody(event.body);
+    const [_, inputs] = parseBody(event.body);
+    const [parseError, parsedData] = parseData(inputs);
     if (parseError) {
       console.error(parseError);
-      return { statusCode: 400, body: renderHTML(parseError, data, formatter) };
+      return { statusCode: 400, body: renderHTML(parseError, data, currencies, currencyFormatter) };
     }
 
     data.originalAmount = parsedData.originalAmount;
@@ -31,7 +32,7 @@ const handler = async (event, context, callback) => {
     const validationError = validate(parsedData);
     if (validationError) {
       console.error(validationError);
-      return { statusCode: 400, body: renderHTML(validationError, data, formatter) };
+      return { statusCode: 400, body: renderHTML(validationError, data, currencies, currencyFormatter) };
     }
 
     data = parsedData;
@@ -39,7 +40,7 @@ const handler = async (event, context, callback) => {
 
   data.result = data.amount * currencies[data.source].rate / currencies[data.target].rate;
 
-  return { statusCode: 200, body: renderHTML(null, data, formatter) };
+  return { statusCode: 200, body: renderHTML(null, data, currencies, currencyFormatter) };
 };
 
 function parseBody(body) {
@@ -47,34 +48,40 @@ function parseBody(body) {
   if (params.length != 3) {
     return [{ message: "Invalid params." }, {}];
   }
-
   const amountKeyValue = params[0].split("=");
   if (amountKeyValue.length != 2) {
     return [{ message: "Missing amount." }, {}];
   }
-
-  const originalAmount = amountKeyValue[1];
-  const amount = Number(originalAmount);
-  if (isNaN(amount)) {
-    return [{ message: "Invalid amount." }, {}];
-  }
-
   const sourceKeyValue = params[1].split("=");
   if (sourceKeyValue.length != 2) {
     return [{ message: "Missing source." }, {}];
   }
-
-  const source = parseInt(sourceKeyValue[1]);
-  if (isNaN(source)) {
-    return [{ message: "Invalid source." }, {}];
-  }
-
   const targetKeyValue = params[2].split("=");
   if (targetKeyValue.length != 2) {
     return [{ message: "Missing target." }, {}];
   }
 
-  const target = parseInt(targetKeyValue[1]);
+  const data = {
+    amount: amountKeyValue[1],
+    source: sourceKeyValue[1],
+    target: targetKeyValue[1],
+  };
+  return [null, data]
+}
+
+function parseData(input) {
+  const originalAmount = input.amount;
+  const amount = Number(originalAmount);
+  if (isNaN(amount)) {
+    return [{ message: "Invalid amount." }, {}];
+  }
+
+  const source = parseInt(input.source);
+  if (isNaN(source)) {
+    return [{ message: "Invalid source." }, {}];
+  }
+
+  const target = parseInt(input.target);
   if (isNaN(target)) {
     return [{ message: "Invalid target." }, {}];
   }
@@ -102,7 +109,11 @@ function validate(input) {
   return null;
 }
 
-function renderHTML(error, { originalAmount, amount, source, target, result }, currencyFormatter) {
+function renderResult({ amount, source, target, result }, currencies, currencyFormatter) {
+  return `${amount} ${currencies[source].name} = <b>${currencyFormatter.format(result)} ${currencies[target].name}</b></h2>`;
+}
+
+function renderHTML(error, { originalAmount, amount, source, target, result }, currencies, currencyFormatter) {
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -112,7 +123,7 @@ function renderHTML(error, { originalAmount, amount, source, target, result }, c
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Video game currency converter</title>
-        <link rel="stylesheet" href="/style.css">
+        <link rel="stylesheet" href="/public/app.css">
       </head>
 
       <body>
@@ -121,18 +132,20 @@ function renderHTML(error, { originalAmount, amount, source, target, result }, c
         <section>
         <form method="post">
           <label>
-            <span>Amount:</span>
+            <span>Amount</span>
             <input type="text" name="amount" value="${amount}">
           </label>
           ${renderCurrencySelect("source", source, "From")}
           ${renderCurrencySelect("target", target, "To")}
-          ${error
-      ? `<h2 style="color: red;">${error.message}</h2>`
-      : `<h2>${amount} ${currencies[source].name} = <b>${currencyFormatter.format(result)} ${currencies[target].name}</b></h2>`
-    }
+          ${error ?
+      `<h2 class="error">${error.message}</h2>` :
+      `<h2>${renderResult({ amount, source, target, result }, currencies, currencyFormatter)}
+          `}
           <button type="submit">Convert</button>
         </form>
         </section>
+        <script>window.currencies = ${JSON.stringify(currencies)}</script>
+        <script src="/public/app.js"></script>
       </body>
     </html>
   `;
@@ -141,7 +154,7 @@ function renderHTML(error, { originalAmount, amount, source, target, result }, c
 function renderCurrencySelect(name, value, label) {
   return `
       <label>
-        <span>${label}:</span>
+        <span>${label}</span>
         <select name="${name}">
           ${currencies.map((currency, currencyIndex) => {
     return `<option value="${currencyIndex}" ${currencyIndex == value ? "selected" : ""}>${currency.name}</option>`

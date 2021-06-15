@@ -100,6 +100,10 @@ button {
   color: #fff;
 }
 
+.error {
+  color: #f44336;
+}
+
 @media (min-width: 1024px) {
   :root {
     font-size: 1.2em;
