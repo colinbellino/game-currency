@@ -6,7 +6,6 @@ const targetInput = document.querySelector("[name='target']");
 const resultElement = document.querySelector("h2");
 const currencyFormatter = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 20 });
 
-// Can be placed in the server ?
 amountInput.oninput = calculate;
 sourceInput.oninput = calculate;
 targetInput.oninput = calculate;
@@ -91,7 +90,6 @@ function calculate() {
     }
 
     data.result = data.amount * currencies[data.source].rate / currencies[data.target].rate;
-    //console.log(JSON.stringify({ inputs, data }, null, 2));
 
     displayResult(data);
 }

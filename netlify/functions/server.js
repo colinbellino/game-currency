@@ -1,16 +1,6 @@
-// Placeholder data from: https://www.reddit.com/r/gaming/comments/725t5v/exchange_rates_of_video_game_currencies/
-// FIXME: These rates are in € but we use them as if they were in USD !
-const currencies = [
-  { id: 0, name: "US Dollar", rate: 1.0 },
-  { id: 1, name: "Euro", rate: 1.223093 },
-  { id: 2, name: "Mineral (StarCraft)", rate: 34722222.22222 },
-  { id: 3, name: "Coin (Super Mario Bros.)", rate: 100000 },
-  { id: 4, name: "Poke Dollar (Pokémon Red/Blue)", rate: 0.00049 },
-  { id: 5, name: "Rupee (Zelda)", rate: 0.09633 },
-];
-const currencyFormatter = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 20 });
+const { currencies, renderResult, parseData, validate } = require('../../public/shared.js');
 
-const handler = async (event, context, callback) => {
+async function handler(event, context, callback) {
   let data = {
     originalAmount: "1",
     amount: 1,
@@ -24,7 +14,7 @@ const handler = async (event, context, callback) => {
     const [parseError, parsedData] = parseData(inputs);
     if (parseError) {
       console.error(parseError);
-      return { statusCode: 400, body: renderHTML(parseError, data, currencies, currencyFormatter) };
+      return { statusCode: 400, body: renderHTML(parseError, data, currencies) };
     }
 
     data.originalAmount = parsedData.originalAmount;
@@ -32,7 +22,7 @@ const handler = async (event, context, callback) => {
     const validationError = validate(parsedData);
     if (validationError) {
       console.error(validationError);
-      return { statusCode: 400, body: renderHTML(validationError, data, currencies, currencyFormatter) };
+      return { statusCode: 400, body: renderHTML(validationError, data, currencies) };
     }
 
     data = parsedData;
@@ -40,7 +30,7 @@ const handler = async (event, context, callback) => {
 
   data.result = data.amount * currencies[data.source].rate / currencies[data.target].rate;
 
-  return { statusCode: 200, body: renderHTML(null, data, currencies, currencyFormatter) };
+  return { statusCode: 200, body: renderHTML(null, data, currencies) };
 };
 
 function parseBody(body) {
@@ -69,51 +59,7 @@ function parseBody(body) {
   return [null, data]
 }
 
-function parseData(input) {
-  const originalAmount = input.amount;
-  const amount = Number(originalAmount);
-  if (isNaN(amount)) {
-    return [{ message: "Invalid amount." }, {}];
-  }
-
-  const source = parseInt(input.source);
-  if (isNaN(source)) {
-    return [{ message: "Invalid source." }, {}];
-  }
-
-  const target = parseInt(input.target);
-  if (isNaN(target)) {
-    return [{ message: "Invalid target." }, {}];
-  }
-
-  return [null, { originalAmount, amount, source, target }];
-}
-
-function validate(input) {
-  if (input.amount > 1_000_000_000_000) {
-    return { message: "Amount too large." };
-  }
-
-  if (input.amount < -1_000_000_000_000) {
-    return { message: "Amount too small." };
-  }
-
-  if (input.source < 0 || input.source > currencies.length - 1) {
-    return { message: "Invalid source currency." };
-  }
-
-  if (input.target < 0 || input.target > currencies.length - 1) {
-    return { message: "Invalid target currency." };
-  }
-
-  return null;
-}
-
-function renderResult({ amount, source, target, result }, currencies, currencyFormatter) {
-  return `${amount} ${currencies[source].name} = <b>${currencyFormatter.format(result)} ${currencies[target].name}</b></h2>`;
-}
-
-function renderHTML(error, { originalAmount, amount, source, target, result }, currencies, currencyFormatter) {
+function renderHTML(error, { originalAmount, amount, source, target, result }, currencies) {
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -139,7 +85,7 @@ function renderHTML(error, { originalAmount, amount, source, target, result }, c
           ${renderCurrencySelect("target", target, "To")}
           ${error ?
       `<h2 class="error">${error.message}</h2>` :
-      `<h2>${renderResult({ amount, source, target, result }, currencies, currencyFormatter)}
+      `<h2>${renderResult(currencies[source], currencies[target], amount, result)}
           `}
           <button type="submit">Convert</button>
         </form>
