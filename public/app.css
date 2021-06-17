@@ -73,6 +73,7 @@ input {
   display: block;
   width: 100%;
   margin: 0;
+  min-height: 44px;
   padding: 0.5rem;
   border: 2px solid rgba(0, 0, 0, 0.15);
   border-radius: var(--border-radius);
@@ -84,6 +85,21 @@ select:focus,
 input:focus {
   border-color: var(--accent-color);
   outline: none;
+}
+
+.select-with-icon {
+  position: relative;
+}
+
+.select-with-icon select {
+  padding-left: 40px;
+}
+
+label img {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 32px;
 }
 
 button {

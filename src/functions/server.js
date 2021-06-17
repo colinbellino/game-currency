@@ -1,4 +1,4 @@
-const { currencies, renderResult, parseData, validate, calculateResult } = require('../../public/shared.js');
+const { currencies, renderResult, parseData, validate, calculateResult } = require("../../public/shared.js");
 
 async function handler(event, context, callback) {
   let data = {
@@ -81,8 +81,8 @@ function renderHTML(error, { originalAmount, amount, source, target, result }, c
             <span>Amount</span>
             <input type="text" name="amount" value="${originalAmount}">
           </label>
-          ${renderCurrencySelect("source", source, "From")}
-          ${renderCurrencySelect("target", target, "To")}
+          ${renderCurrencySelect("source", source, "From", currencies)}
+          ${renderCurrencySelect("target", target, "To", currencies)}
           ${error ?
       `<h2 class="error">${error.message}</h2>` :
       `<h2>${renderResult(currencies[source], currencies[target], amount, result)}
@@ -96,15 +96,16 @@ function renderHTML(error, { originalAmount, amount, source, target, result }, c
   `;
 }
 
-function renderCurrencySelect(name, value, label) {
+function renderCurrencySelect(name, value, label, currencies) {
   return `
       <label>
-        <span>${label}</span>
-        <select name="${name}">
-          ${currencies.map((currency, currencyIndex) => {
-    return `<option value="${currencyIndex}" ${currencyIndex == value ? "selected" : ""}>${currency.name}</option>`
-  }).join("\n")}
-        </select>
+      <span>${label}</span>
+      <div class="select-with-icon">
+          <img src="/public/images/${currencies[value].id}.png">
+          <select name="${name}">
+            ${currencies.map((currency, currencyIndex) => `<option value="${currencyIndex}" ${currencyIndex == value ? "selected" : ""}>${currency.name}</option>`).join("\n")}
+          </select>
+        </div>
       </label>
     `;
 }
