@@ -5,58 +5,76 @@ const currencyFormatter = new Intl.NumberFormat(locale, { maximumSignificantDigi
 // Placeholder data from: https://www.reddit.com/r/gaming/comments/725t5v/exchange_rates_of_video_game_currencies/
 // FIXME: These rates are in € but we use them as if they were in USD !
 export const currencies = [
-    { id: "us_dollar", name: "US Dollar", rate: 1.0 },
-    { id: "euro", name: "Euro", rate: 1.223093 },
-    { id: "mineral_starcraft_1", name: "Mineral (StarCraft)", rate: 34722222.22222 },
-    { id: "coin_super_mario_bros", name: "Coin (Super Mario Bros.)", rate: 100000 },
-    { id: "poke_dollar_pokemon_red", name: "Poke Dollar (Pokémon Red/Blue)", rate: 0.00049 },
-    { id: "rupee_zelda_1", name: "Rupee (Zelda)", rate: 0.09633 },
+  { id: "us_dollar", name: "US Dollar", rate: 1.0 },
+  { id: "euro", name: "Euro", rate: 1.223093 },
+  { id: "mineral_starcraft_1", name: "Mineral (StarCraft)", rate: 34722222.22222 },
+  { id: "coin_super_mario_bros", name: "Coin (Super Mario Bros.)", rate: 100000 },
+  { id: "poke_dollar_pokemon_red", name: "Poke Dollar (Pokémon Red/Blue)", rate: 0.00049 },
+  { id: "rupee_zelda_1", name: "Rupee (Zelda)", rate: 0.09633 },
 ];
 
 export function renderResult(sourceCurrency, targetCurrency, amount, result) {
-    return `${amount} ${sourceCurrency.name} = <b>${currencyFormatter.format(result)} ${targetCurrency.name}</b></h2>`;
+  return `${amount} ${sourceCurrency.name} = <b>${currencyFormatter.format(result)} ${targetCurrency.name}</b></h2>`;
 }
 
 export function parseData(input) {
-    const originalAmount = input.amount;
-    const amount = Number(originalAmount);
-    if (isNaN(amount)) {
-        return [{ message: "Invalid amount." }, {}];
-    }
+  const originalAmount = input.amount;
+  const amount = Number(originalAmount);
+  if (isNaN(amount)) {
+    return [{ message: "Invalid amount." }, {}];
+  }
 
-    const source = parseInt(input.source);
-    if (isNaN(source)) {
-        return [{ message: "Invalid source." }, {}];
-    }
+  const source = parseInt(input.source);
+  if (isNaN(source)) {
+    return [{ message: "Invalid source." }, {}];
+  }
 
-    const target = parseInt(input.target);
-    if (isNaN(target)) {
-        return [{ message: "Invalid target." }, {}];
-    }
+  const target = parseInt(input.target);
+  if (isNaN(target)) {
+    return [{ message: "Invalid target." }, {}];
+  }
 
-    return [null, { originalAmount, amount, source, target }];
+  return [null, { originalAmount, amount, source, target }];
 }
 
 export function validate(input) {
-    if (input.amount > 1_000_000_000_000) {
-        return { message: "Amount too large." };
-    }
+  if (input.amount > 1_000_000_000_000) {
+    return { message: "Amount too large." };
+  }
 
-    if (input.amount < -1_000_000_000_000) {
-        return { message: "Amount too small." };
-    }
+  if (input.amount < -1_000_000_000_000) {
+    return { message: "Amount too small." };
+  }
 
-    if (input.source < 0 || input.source > currencies.length - 1) {
-        return { message: "Invalid source currency." };
-    }
+  if (input.source < 0 || input.source > currencies.length - 1) {
+    return { message: "Invalid source currency." };
+  }
 
-    if (input.target < 0 || input.target > currencies.length - 1) {
-        return { message: "Invalid target currency." };
-    }
+  if (input.target < 0 || input.target > currencies.length - 1) {
+    return { message: "Invalid target currency." };
+  }
 
-    return null;
+  return null;
 }
 
 export function calculateResult(amount, sourceRate, targetRate) {
-    return amount * sourceRate / targetRate;
+  return amount * sourceRate / targetRate;
+}
+
+export function renderCurrencySelect(name, value, label, currencies) {
+  return `
+    <label>
+      <span>${label}</span>
+      <div class="select-with-icon">
+        <img src="${getCurrencyURL(currencies[value])}" class="select-icon">
+        <select name="${name}">
+          ${currencies.map((currency, currencyIndex) => `<option value="${currencyIndex}" ${currencyIndex == value ? "selected" : ""}>${currency.name}</option>`).join("\n")}
+        </select>
+      </div>
+    </label>
+  `;
+}
+
+export function getCurrencyURL(currency) {
+    return `/public/images/${currency.id}.png`;
 }

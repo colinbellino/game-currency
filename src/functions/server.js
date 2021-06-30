@@ -1,4 +1,4 @@
-const { currencies, renderResult, parseData, validate, calculateResult } = require("../../public/shared.js");
+const { currencies, renderResult, parseData, validate, calculateResult, renderCurrencySelect } = require("../../public/shared.js");
 
 async function handler(event, context, callback) {
   let data = {
@@ -59,7 +59,7 @@ function parseBody(body) {
   return [null, data]
 }
 
-function renderHTML(error, { originalAmount, amount, source, target, result }, currencies) {
+function renderHTML(error, { originalAmount, amount, source, target, result }) {
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -84,9 +84,9 @@ function renderHTML(error, { originalAmount, amount, source, target, result }, c
           ${renderCurrencySelect("source", source, "From", currencies)}
           ${renderCurrencySelect("target", target, "To", currencies)}
           ${error ?
-      `<h2 class="error">${error.message}</h2>` :
-      `<h2>${renderResult(currencies[source], currencies[target], amount, result)}
-          `}
+            `<h2 class="error">${error.message}</h2>` :
+            `<h2>${renderResult(currencies[source], currencies[target], amount, result)}`
+          }
           <button type="submit">Convert</button>
         </form>
         </section>
@@ -94,20 +94,6 @@ function renderHTML(error, { originalAmount, amount, source, target, result }, c
       </body>
     </html>
   `;
-}
-
-function renderCurrencySelect(name, value, label, currencies) {
-  return `
-      <label>
-      <span>${label}</span>
-      <div class="select-with-icon">
-          <img src="/public/images/${currencies[value].id}.png">
-          <select name="${name}">
-            ${currencies.map((currency, currencyIndex) => `<option value="${currencyIndex}" ${currencyIndex == value ? "selected" : ""}>${currency.name}</option>`).join("\n")}
-          </select>
-        </div>
-      </label>
-    `;
 }
 
 module.exports = { handler };
