@@ -9,8 +9,8 @@ async function handler(event, context, callback) {
     result: 0,
   };
 
-  if (event.body) {
-    const [_, inputs] = parseBody(event.body);
+  if (Object.keys(event.multiValueQueryStringParameters).length > 0) {
+    const [_, inputs] = parseParams(event.multiValueQueryStringParameters);
     data.originalAmount = inputs.amount;
 
     const [parseError, parsedData] = parseData(inputs);
@@ -33,28 +33,28 @@ async function handler(event, context, callback) {
   return { statusCode: 200, body: renderHTML(null, data, currencies) };
 };
 
-function parseBody(body) {
-  const params = body.split("&");
-  if (params.length != 3) {
+function parseParams(params) {
+  if (
+    params.hasOwnProperty("amount") === false ||
+    params.hasOwnProperty("source") === false ||
+    params.hasOwnProperty("target") === false
+  ) {
     return [{ message: "Invalid params." }, {}];
   }
-  const amountKeyValue = params[0].split("=");
-  if (amountKeyValue.length != 2) {
+  if (params.amount.length != 1) {
     return [{ message: "Missing amount." }, {}];
   }
-  const sourceKeyValue = params[1].split("=");
-  if (sourceKeyValue.length != 2) {
+  if (params.source.length != 1) {
     return [{ message: "Missing source." }, {}];
   }
-  const targetKeyValue = params[2].split("=");
-  if (targetKeyValue.length != 2) {
+  if (params.target.length != 1) {
     return [{ message: "Missing target." }, {}];
   }
 
   const data = {
-    amount: amountKeyValue[1],
-    source: sourceKeyValue[1],
-    target: targetKeyValue[1],
+    amount: params.amount[0],
+    source: params.source[0],
+    target: params.target[0],
   };
   return [null, data]
 }
@@ -76,19 +76,20 @@ function renderHTML(error, { originalAmount, amount, source, target, result }) {
         <h1>Video game currency converter</h1>
 
         <section>
-        <form method="post">
-          <label>
-            <span>Amount</span>
-            <input type="text" name="amount" value="${originalAmount}">
-          </label>
-          ${renderCurrencySelect("source", source, "From", currencies)}
-          ${renderCurrencySelect("target", target, "To", currencies)}
-          ${error ?
-            `<h2 class="error">${error.message}</h2>` :
-            `<h2>${renderResult(currencies[source], currencies[target], amount, result)}`
-          }
-          <button type="submit">Convert</button>
-        </form>
+          <form method="get">
+            <label>
+              <span>Amount</span>
+              <input type="text" name="amount" value="${originalAmount}">
+            </label>
+            ${renderCurrencySelect("source", source, "From", currencies)}
+            ${renderCurrencySelect("target", target, "To", currencies)}
+            ${error ?
+              `<h2 class="error">${error.message}</h2>` :
+              `<h2>${renderResult(currencies[source], currencies[target], amount, result)}`
+            }
+            <button type="submit">Convert</button>
+            <button type="submit" formaction="/.netlify/functions/swap_currencies">Swap currency</button>
+          </form>
         </section>
         <script type="module" src="/public/app.js"></script>
       </body>
@@ -96,4 +97,4 @@ function renderHTML(error, { originalAmount, amount, source, target, result }) {
   `;
 }
 
-module.exports = { handler };
+module.exports = { handler, parseParams };
