@@ -1,7 +1,9 @@
+// TODO: Set this depending on user's prefered locale
+const locale = "en-US";
+const currencyFormatter = new Intl.NumberFormat(locale, { maximumSignificantDigits: 20 });
+
 // Placeholder data from: https://www.reddit.com/r/gaming/comments/725t5v/exchange_rates_of_video_game_currencies/
 // FIXME: These rates are in € but we use them as if they were in USD !
-const currencyFormatter = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 20 });
-
 export const currencies = [
     { id: "us_dollar", name: "US Dollar", rate: 1.0 },
     { id: "euro", name: "Euro", rate: 1.223093 },
@@ -12,7 +14,7 @@ export const currencies = [
 ];
 
 export function renderResult(sourceCurrency, targetCurrency, amount, result) {
-    return `${amount} ${sourceCurrency.name} = <b>${result} ${targetCurrency.name}</b></h2>`;
+    return `${amount} ${sourceCurrency.name} = <b>${currencyFormatter.format(result)} ${targetCurrency.name}</b></h2>`;
 }
 
 export function parseData(input) {
