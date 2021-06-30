@@ -167,21 +167,45 @@ label img {
   }
 
   form {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-areas: 
+      "amount source swap target" 
+      "result result result submit";
+    grid-template-columns: 1fr 1fr 0.1fr 1fr;
+    grid-template-rows: 1fr 0.5fr;
+    align-items: end;
+    column-gap: 1rem;
+    row-gap: 1rem;
   }
-
-  label,
-  .convert-button {
-    width: 32%;
-    margin-bottom: 0;
+  
+  form > :nth-child(1) {
+    grid-area: amount;
+    margin: 0;
   }
-
-  .convert-button {
-    margin-top: 2rem;
-    margin-bottom: 0;
+  
+  form > :nth-child(2) {
+    grid-area: source;
+    margin: 0;
+  }
+  
+  form > :nth-child(3) {
+    grid-area: swap;
+    margin: 0;
+  }
+  
+  form > :nth-child(4) {
+    grid-area: target;
+    margin: 0;
+  }
+  
+  form > :nth-child(5) {
+    grid-area: result;
+    margin: 0;
+  }
+  
+  form > :nth-child(6) {
+    grid-area: submit;
+    margin: 0;
   }
 
   .swap-button svg {
