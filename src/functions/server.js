@@ -5,7 +5,7 @@ async function handler(event, context, callback) {
     originalAmount: "1",
     amount: 1,
     source: 0,
-    target: 4,
+    target: 16,
     result: 0,
   };
 
