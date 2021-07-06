@@ -69,7 +69,7 @@ function renderHTML(error, { originalAmount, amount, source, target, result }) {
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Video game currency converter</title>
-        <link rel="stylesheet" href="/public/app.css">
+        <link rel="stylesheet" href="./public/app.css">
       </head>
 
       <body>
@@ -94,7 +94,7 @@ function renderHTML(error, { originalAmount, amount, source, target, result }) {
             <button type="submit" class="convert-button">Convert</button>
           </form>
         </section>
-        <script type="module" src="/public/app.js"></script>
+        <script type="module" src="./public/app.js"></script>
       </body>
     </html>
   `;
