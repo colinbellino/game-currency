@@ -1,3 +1,4 @@
+const zlib = require("zlib");
 const { currencies, renderResult, parseData, validate, calculateResult, renderCurrencySelect } = require("../shared.js");
 
 async function handler(event, context, callback) {
@@ -16,13 +17,13 @@ async function handler(event, context, callback) {
     const [parseError, parsedData] = parseData(inputs);
     if (parseError) {
       console.error(parseError);
-      return { statusCode: 400, body: renderHTML(parseError, data, currencies) };
+      return compressResponse(400, renderHTML(parseError, data, currencies));
     }
 
     const validationError = validate(parsedData);
     if (validationError) {
       console.error(validationError);
-      return { statusCode: 400, body: renderHTML(validationError, data, currencies) };
+      return compressResponse(400, renderHTML(validationError, data, currencies));
     }
 
     data = parsedData;
@@ -30,7 +31,7 @@ async function handler(event, context, callback) {
 
   data.result = calculateResult(data.amount, currencies[data.source].rate, currencies[data.target].rate);
 
-  return { statusCode: 200, body: renderHTML(null, data, currencies) };
+  return compressResponse(200, renderHTML(null, data, currencies));
 };
 
 function parseParams(params) {
@@ -98,6 +99,22 @@ function renderHTML(error, { originalAmount, amount, source, target, result }) {
       </body>
     </html>
   `;
+}
+
+function compressResponse(statusCode, body) {
+  const compressedBody = zlib.gzipSync(zlib.deflateSync(body));
+    
+  const response = {
+      statusCode,
+      body: compressedBody.toString("base64"),
+      isBase64Encoded: true,
+      headers: {
+          "Content-Type": "text/html",
+          "Content-Encoding": "deflate, gzip"
+      }
+  };
+  
+  return response;
 }
 
 module.exports = { handler, parseParams };
