@@ -1,4 +1,4 @@
-const { currencies, renderResult, parseData, validate, calculateResult, renderCurrencySelect } = require("../../public/shared.js");
+const { currencies, renderResult, parseData, validate, calculateResult, renderCurrencySelect } = require("../shared.js");
 
 async function handler(event, context, callback) {
   let data = {
@@ -94,7 +94,7 @@ function renderHTML(error, { originalAmount, amount, source, target, result }) {
             <button type="submit" class="convert-button">Convert</button>
           </form>
         </section>
-        <script type="module" src="/public/app.js"></script>
+        <script type="module" src="/build/app.min.js"></script>
       </body>
     </html>
   `;

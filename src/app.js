@@ -1,6 +1,4 @@
-import { currencies, parseData, validate, renderResult, calculateResult, getCurrencyURL } from "/public/shared.js";
-
-{
+(function(){
   const amountInput = document.querySelector("[name='amount']");
   const sourceSelect = document.querySelector("[name='source']");
   const targetSelect = document.querySelector("[name='target']");
@@ -77,4 +75,4 @@ import { currencies, parseData, validate, renderResult, calculateResult, getCurr
     resultHeading.classList.remove("error");
     resultHeading.innerHTML = renderResult(currencies[source], currencies[target], amount, result);
   }
-}
+})();
