@@ -10,6 +10,12 @@
   targetSelect.addEventListener("input", onCurencyChange);
   swapButton.addEventListener("click", onCurrencySwap);
 
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+      navigator.serviceWorker.register("/service-worker.js");
+    });
+  }
+
   function onAmountChange(_event) {
     calculateAndUpdateResult();
   }

@@ -2,7 +2,9 @@
     "name": "game-currency",
     "scripts": {
         "dev": "netlify dev",
-        "build": "netlify-lambda build src/functions && npm run minify",
+        "build": "npm run build:app && npm run build:functions",
+        "build:functions": "netlify-lambda build src/functions",
+        "build:app": "npm run minify",
         "minify": "uglifyjs --compress --mangle --toplevel --output build/app.min.js -- src/app.js src/shared.js && cleancss --output build/app.min.css src/app.css"
     },
     "dependencies": {
