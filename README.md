@@ -12,3 +12,10 @@ This project is a work in progress, and will be for a while since we work on it 
 
 - [BarashKa01](https://github.com/BarashKa01)
 - [Colin Bellino](https://github.com/colinbellino)
+
+## How to install and run ?
+
+run the following commands :
+- npm install
+- npm run build
+- npm run dev
