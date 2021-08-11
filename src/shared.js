@@ -79,7 +79,7 @@ export function renderCurrencySelect(name, value, label, currencies) {
     <label>
       <span>${label}</span>
       <div class="select-with-icon">
-        <img src="${getCurrencyURL(currencies[value])}" class="select-icon">
+        <img src="${getCurrencyURL(currencies[value])}" class="select-icon" aria-hidden="true">
         <select name="${name}">
           ${currencies.map((currency, currencyIndex) => `<option value="${currencyIndex}" ${currencyIndex == value ? "selected" : ""}>${currency.name}</option>`).join("\n")}
         </select>
