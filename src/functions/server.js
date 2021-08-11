@@ -68,13 +68,15 @@ function renderHTML(error, { originalAmount, amount, source, target, result }) {
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Video game currency converter</title>
+        <title>Video Games Currencies</title>
+        <meta name="description" content="Convert currency from a video game universe to another.">
+        <meta name="theme-color" content="#000000">
         <link rel="stylesheet" href="/build/app.min.css">
         <link rel="manifest" href="/public/manifest.json">
       </head>
 
       <body>
-        <h1><a href="/">Video game currency converter</a></h1>
+        <h1><a href="/">Converter</a></h1>
 
         <section>
           <form method="get">
