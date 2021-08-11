@@ -74,7 +74,7 @@ function renderHTML(error, { originalAmount, amount, source, target, result }) {
       </head>
 
       <body>
-        <h1>Video game currency converter</h1>
+        <h1><a href="/">Video game currency converter</a></h1>
 
         <section>
           <form method="get">
