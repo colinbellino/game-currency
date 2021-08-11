@@ -4,11 +4,13 @@
   const targetSelect = document.querySelector("[name='target']");
   const resultHeading = document.querySelector("h2");
   const swapButton = document.querySelector(".swap-button");
+  const convertButton = document.querySelector(".convert-button");
 
   amountInput.addEventListener("input", onAmountChange);
   sourceSelect.addEventListener("input", onCurencyChange);
   targetSelect.addEventListener("input", onCurencyChange);
   swapButton.addEventListener("click", onCurrencySwap);
+  convertButton.addEventListener("click", onConvert);
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function() {
@@ -37,6 +39,11 @@
     event.preventDefault();
   }
 
+  function onConvert(event) {
+    calculateAndUpdateResult();
+    event.preventDefault();
+  }
+
   function updateSelectImage(selectElement) {
     const imageElement = selectElement.closest(".select-with-icon").querySelector(".select-icon");
     imageElement.setAttribute("src", getCurrencyURL(currencies[selectElement.value]));
@@ -60,6 +67,19 @@
     data.result = calculateResult(data.amount, currencies[data.source].rate, currencies[data.target].rate);
 
     displayResult(data);
+
+    if ("URLSearchParams" in window) {
+      var searchParams = new URLSearchParams(window.location.search);
+      searchParams.set("amount", data.amount);
+      searchParams.set("source", data.source);
+      searchParams.set("target", data.target);
+
+      if ("history" in window) {
+        history.pushState({}, "", "?" + searchParams.toString())
+      } else {
+        window.location.search = searchParams.toString();
+      }
+    }
   }
 
   function extractData() {
