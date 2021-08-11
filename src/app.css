@@ -1,8 +1,3 @@
-:root {
-  --border-radius: 0.2em;
-  --accent-color: #00897b;
-}
-
 body {
   margin: 0;
   padding: 0;
@@ -30,7 +25,8 @@ h1 {
   color: #fff;
 }
 
-h1 a {
+h1 a,
+h1 a:visited {
   color: inherit;
   text-decoration: none;
 }
@@ -58,7 +54,7 @@ section {
   padding: 1rem;
   font-size: 1.2rem;
   font-weight: normal;
-  border-radius: var(--border-radius);
+  border-radius: 0.2em;
   background: #fff;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
@@ -85,14 +81,14 @@ input {
   min-height: 44px;
   padding: 0.5rem;
   border: 2px solid rgba(0, 0, 0, 0.15);
-  border-radius: var(--border-radius);
+  border-radius: 0.2em;
   background: transparent;
   font-size: 0.9rem;
 }
 
 select:focus,
 input:focus {
-  border-color: var(--accent-color);
+  border-color: #00897b;
   outline: none;
 }
 
@@ -118,10 +114,10 @@ label img {
   margin: 0;
   padding: 1rem;
   border: 0;
-  border-radius: var(--border-radius);
+  border-radius: 0.2em;
   font-size: 1.2rem;
   text-transform: uppercase;
-  background: var(--accent-color);
+  background: #00897b;
   color: #fff;
 }
 
@@ -134,7 +130,7 @@ label img {
   padding: 6px;
   background: none;
   border: 2px solid rgba(0, 0, 0, 0.15);
-  border-radius: var(--border-radius);
+  border-radius: 0.2em;
 }
 
 .swap-button svg {
@@ -144,11 +140,11 @@ label img {
 }
 
 .swap-button:hover {
-  border-color: var(--accent-color);
+  border-color: #00897b;
 }
 
 .swap-button:hover svg{
-  fill: var(--accent-color);
+  fill: #00897b;
 }
 
 .error {
